@@ -18,9 +18,9 @@ $(document).ready(()=>{ // jQuery main
 
     function main(){
         let bound = new createjs.Shape();
-        bound.graphics.beginStroke("Black").drawRect(100,300,470,130);
+        //bound.graphics.beginStroke("Black").drawRect(100,300,470,130);
         stage.addChild(bound);
-        let light = 550;
+        let light = 0;
         let tree = [new createjs.Bitmap(repo.getResult('tree0')),
                        new createjs.Bitmap(repo.getResult('tree1')),
                        new createjs.Bitmap(repo.getResult('tree2')),
@@ -33,15 +33,16 @@ $(document).ready(()=>{ // jQuery main
         bug.set({scaleX:0.2,scaleY:0.2});
         bug.set({x:100+Math.floor(Math.random()*1000)%470,y:300+Math.floor(Math.random()*1000)%130});
         stage.addChild(bug);
+        createjs.Tween.get(bug).to({x:bug.x+(100-Math.floor(Math.random()*200)),
+                                    y:bug.y+(100-Math.floor(Math.random()*200))},1000);
         bug.on('click',() => {
             stage.removeChild(bug);
             bug.set({scaleX:0.2,scaleY:0.2});
             bug.set({x:100+Math.floor(Math.random()*1000)%470,y:300+Math.floor(Math.random()*1000)%130});
+            createjs.Tween.get(bug).to({x:bug.x+(100-Math.floor(Math.random()*200)),
+                                        y:bug.y+(100-Math.floor(Math.random()*200))},1000);
             stage.addChild(bug);
         });
-
     }
-
     setup();
-
 });
