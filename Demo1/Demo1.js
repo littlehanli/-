@@ -7,10 +7,10 @@ $(document).ready(()=>{ // jQuery main
         // automatically update
         createjs.Ticker.on("tick", e => stage.update()); //每次更新呼叫這個函式
         createjs.Ticker.framerate = 60; //一秒鐘更新六十次
-        repo.loadManifest([{id:'tree0',src:"../images/Germination.png"},
-                           {id:'tree1',src:"../images/GreenLeaf.png"},
-                           {id:'tree2',src:"../images/RedLeaf.png"},
-                           {id:'tree3',src:"../images/Wither.png"},
+        repo.loadManifest([{id:'tree0',src:"../images/Germination.jpg"},
+                           {id:'tree1',src:"../images/GreenLeaf.jpg"},
+                           {id:'tree2',src:"../images/RedLeaf.jpg"},
+                           {id:'tree3',src:"../images/Wither.jpg"},
                            {id:'bug',src:"../images/bug.png"}
         ]);
         repo.on('complete', main); //Wait until all assets are loaded
