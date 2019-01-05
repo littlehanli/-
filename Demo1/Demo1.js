@@ -1,5 +1,8 @@
 $(document).ready(()=>{ // jQuery main
-
+    const TREE_SCALE_X=0.5;
+    const TREE_SCALE_Y=0.5;
+    const TREE_X=150;
+    const TREE_Y=250;
     let stage = new createjs.Stage(canvas);
     let repo = new createjs.LoadQueue();
 
@@ -7,11 +10,11 @@ $(document).ready(()=>{ // jQuery main
         // automatically update
         createjs.Ticker.on("tick", e => stage.update()); //每次更新呼叫這個函式
         createjs.Ticker.framerate = 60; //一秒鐘更新六十次
-        repo.loadManifest([{id:'tree0',src:"../images/Germination.jpg"},
-                           {id:'tree1',src:"../images/GreenLeaf.jpg"},
-                           {id:'tree2',src:"../images/RedLeaf.jpg"},
-                           {id:'tree3',src:"../images/Wither.jpg"},
-                           {id:'bug',src:"../images/bug.png"}
+        repo.loadManifest([{id:'tree0',src:"../images/Germination.png"},
+                           {id:'tree1',src:"../images/GreenLeaf.png"},
+                           {id:'tree2',src:"../images/RedLeaf.png"},
+                           {id:'tree3',src:"../images/Wither.png"},
+                           {id:'bug',src:"../images/bug.png"},
         ]);
         repo.on('complete', main); //Wait until all assets are loaded
     }
@@ -26,12 +29,11 @@ $(document).ready(()=>{ // jQuery main
                     new createjs.Bitmap(repo.getResult('tree2')),
                     new createjs.Bitmap(repo.getResult('tree3')),
         ];
-
         /*Grow up tree*/
         let t=0;
         let light = 0;
-        tree[light].set({scaleX: 0.2, scaleY: 0.2});
-        tree[light].set({x: 30, y: 30});
+        tree[light].set({scaleX: TREE_SCALE_X, scaleY: TREE_SCALE_Y});
+        tree[light].set({x: TREE_X, y: TREE_Y});
         stage.addChild(tree[light]);
         let intervalId=null;
         let growTree=function() {
@@ -43,8 +45,8 @@ $(document).ready(()=>{ // jQuery main
                     clearInterval(intervalId);
                     clearInterval(hazard);
                 }
-                tree[light].set({scaleX: 0.2, scaleY: 0.2});
-                tree[light].set({x: 30, y: 30});
+                tree[light].set({scaleX: TREE_SCALE_X, scaleY: TREE_SCALE_Y});
+                tree[light].set({x: TREE_X, y: TREE_Y});
                 stage.addChildAt(tree[light],0);
                 t=0;
             }
@@ -53,8 +55,8 @@ $(document).ready(()=>{ // jQuery main
             if(count > 10) {
                 stage.removeChild(tree[light]);
                 light=3;
-                tree[light].set({scaleX: 0.2, scaleY: 0.2});
-                tree[light].set({x: 30, y: 30});
+                tree[light].set({scaleX: TREE_SCALE_X, scaleY: TREE_SCALE_Y});
+                tree[light].set({x: TREE_X, y: TREE_Y});
                 stage.addChildAt(tree[light],0);
                 console.log("It's dead!");
                 clearInterval(intervalId);
@@ -83,7 +85,9 @@ $(document).ready(()=>{ // jQuery main
                 count--;
                 stage.removeChild(bug);
             });
-            if(count>10) clearInterval(hazard);
+            if(count>10){
+                clearInterval(hazard);
+            }
         }
         hazard = setInterval(bugEvent,3000);
 
