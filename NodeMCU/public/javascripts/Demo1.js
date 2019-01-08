@@ -1,5 +1,10 @@
 $(document).ready(()=>{ // jQuery main
 
+    const TREE_SCALE_X=1.9;
+    const TREE_SCALE_Y=1.9;
+    const TREE_X=0;
+    const TREE_Y=0;
+
     let stage = new createjs.Stage(canvas);
     let repo = new createjs.LoadQueue();
     let light_sum = 0;
@@ -12,7 +17,10 @@ $(document).ready(()=>{ // jQuery main
             {id:'tree1',src:"../images/GreenLeaf.gif"},
             {id:'tree2',src:"../images/RedLeaf.gif"},
             {id:'tree3',src:"../images/Wither.gif"},
-            {id:'bug',src:"../images/bug.png"}
+            {id:'bug',src:"../images/bug.png"},
+            {id:'success',src:"../images/success.png"},
+            {id:'fail',src:"../images/fail.png"},
+            {id:'failbgm',src:"../audios/game_fail.mp3"}
         ]);
 
         repo.on('complete', main); // Wait until all assets are loaded
@@ -25,14 +33,14 @@ $(document).ready(()=>{ // jQuery main
         let tree = [new createjs.Bitmap(repo.getResult('tree0')),
             new createjs.Bitmap(repo.getResult('tree1')),
             new createjs.Bitmap(repo.getResult('tree2')),
-            new createjs.Bitmap(repo.getResult('tree3')),
+            new createjs.Bitmap(repo.getResult('tree3'))
         ];
 
         /* Grow up tree */
         let t = 0;
         let light = 0;
-        // tree[light].set({scaleX: 0.2, scaleY: 0.2});
-        tree[light].set({ y: 130});
+        tree[light].set({scaleX: TREE_SCALE_X, scaleY: TREE_SCALE_Y});
+        tree[light].set({x: TREE_X, y: TREE_Y});
         stage.addChild(tree[light]);
         let intervalId = null;
 
@@ -40,22 +48,26 @@ $(document).ready(()=>{ // jQuery main
             // 600 1500 2000
             if (light_sum <= 600) {
                 light = 0
-                tree[light].set({y: 130});
+                tree[light].set({scaleX: TREE_SCALE_X, scaleY: TREE_SCALE_Y});
+                tree[light].set({x: TREE_X, y: TREE_Y});
                 stage.addChildAt(tree[light], 0);
             }
             else if (light_sum > 600 && light_sum <= 1500) {
                 stage.removeChild(tree[light]);
                 light = light < 1 ? light + 1 : light;
-                tree[light].set({y: 130});
+                tree[light].set({scaleX: TREE_SCALE_X*1.6, scaleY: TREE_SCALE_Y*1.6});
+                tree[light].set({x: TREE_X, y: TREE_Y});
                 stage.addChildAt(tree[light], 0);
             }
             else if (light_sum > 1500 && light_sum <= 2000) {
                 stage.removeChild(tree[light]);
                 light = light < 2 ? light + 1 : light;
-                tree[light].set({y: 130});
+                tree[light].set({scaleX: TREE_SCALE_X*1.6, scaleY: TREE_SCALE_Y*1.6});
+                tree[light].set({x: TREE_X, y: TREE_Y});
                 stage.addChildAt(tree[light], 0);
-                console.log("Congratulation!");
-
+                document.getElementById('finish_img').src="../images/success.png";
+                document.getElementById('msg').innerText="Congratulation!";
+                document.getElementById('dialog').style.display = "initial";
                 clearInterval(intervalId);
                 clearInterval(lightInterval);
                 clearInterval(hazard);
@@ -65,11 +77,14 @@ $(document).ready(()=>{ // jQuery main
             if (count > 10) {
                 stage.removeChild(tree[light]);
                 light = 3;
-                // tree[light].set({scaleX: 0.2, scaleY: 0.2});
-                tree[light].set({y: 130});
+                tree[light].set({scaleX: TREE_SCALE_X*1.6, scaleY: TREE_SCALE_Y*1.6});
+                tree[light].set({x: TREE_X, y: TREE_Y});
                 stage.addChildAt(tree[light], 0);
-                console.log("It's dead!");
+                document.getElementById('finish_img').src="../images/fail.png";
+                document.getElementById('msg').innerText="It's dead!";
+                document.getElementById('dialog').style.display = "initial";
 
+                repo.getResult('failbgm').play();
                 clearInterval(intervalId);
                 clearInterval(lightInterval);
             }
@@ -82,9 +97,9 @@ $(document).ready(()=>{ // jQuery main
         let bugEvent= function(){
             let bug = new createjs.Bitmap(repo.getResult('bug'));
 
-            bug.set({scaleX:0.2,scaleY:0.2});
-            bug.set({x:100 + Math.floor(Math.random()*1000)%470,
-                y:300+Math.floor(Math.random()*1000)%130});
+            bug.set({scaleX:0.3,scaleY:0.3});
+            bug.set({x:1000 + Math.floor(Math.random()*1000)%470,
+                y:700+Math.floor(Math.random()*1000)%130});
             stage.addChild(bug);
             console.log("bug : "+ count++);
             createjs.Tween.get(bug).to({x:bug.x+(100-Math.floor(Math.random()*200)),
@@ -93,7 +108,10 @@ $(document).ready(()=>{ // jQuery main
                 count--;
                 stage.removeChild(bug);
             });
-            if(count>10) clearInterval(hazard);
+            if(count>10)
+            {
+                clearInterval(hazard);
+            }
         }
         hazard = setInterval(bugEvent,3000);
     }
@@ -103,9 +121,9 @@ $(document).ready(()=>{ // jQuery main
     let lightInterval = setInterval(function(){
         $.get("/light", function(data){
             console.log(data.light);
-            light_sum += (parseInt(data.light) + 30);
+            light_sum += (parseInt(data.light) + 50);
 
-            $("#light-val").text("現在光的數值是： " + light_sum);
+            $("#light-val").text(light_sum);
         })
     }, 1500);
 });
